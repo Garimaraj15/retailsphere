@@ -1,0 +1,104 @@
+/* index.css */
+
+/* Reset & global styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background-color: #f9f9f9;
+  color: #222;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+/* Code blocks */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+  background-color: #f1f1f1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* Input, Select, Textarea */
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 16px;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  font-size: 16px;
+  padding: 10px 16px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive container */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Navigation Links */
+nav a {
+  text-decoration: none;
+  color: #333;
+  margin-right: 20px;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Media queries for mobile */
+@media (max-width: 600px) {
+  input,
+  select,
+  button {
+    width: 100%;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav a {
+    margin-bottom: 10px;
+  }
+}
+
+/* Optional: Dark mode base (if using dark theme later) */
+body.dark {
+  background-color: #121212;
+  color: #eee;
+}
