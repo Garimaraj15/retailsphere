@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from queue_routes import queue_bp
-from db import get_db, close_db
+from db import get_db
 import os
 
 app = Flask(__name__)
@@ -10,9 +10,6 @@ app.register_blueprint(queue_bp)
 
 queues = {}  # In-memory store for queues
 
-@app.teardown_appcontext
-def teardown_db(exception):
-    close_db()
 
 @app.route('/queue')
 def queue_page():
