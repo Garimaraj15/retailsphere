@@ -1,19 +1,13 @@
 import mysql.connector
-from flask import g
 import os
+from dotenv import load_dotenv
 
-def get_db():
-    if 'db' not in g:
-        g.db = mysql.connector.connect(
-            host=os.getenv("MYSQLHOST", "localhost"),
-            user=os.getenv("MYSQLUSER", "root"),
-            password=os.getenv("MYSQLPASSWORD"),
-            database=os.getenv("MYSQLDATABASE"),
-            port=int(os.getenv("MYSQLPORT", 3306))
-        )
-    return g.db
+load_dotenv()
 
-def close_db(e=None):
-    db = g.pop('db', None)
-    if db is not None:
-        db.close()
+mydb = mysql.connector.connect(
+    host=os.getenv("DB_HOST"),
+    port=os.getenv("DB_PORT"),  # ✅ Add this line
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    database=os.getenv("DB_NAME")
+)
