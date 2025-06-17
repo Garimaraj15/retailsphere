@@ -6,12 +6,15 @@ import {
 import WhisprCart from './pages/WhisprCart'; // ✅
 import { useTranslation } from 'react-i18next';
 
+// ✅ Define backend URL once
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 // Dashboard Component
 const Dashboard = () => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/dashboard/analytics")
+    fetch(`${BACKEND_URL}/dashboard/analytics`)
       .then(res => res.json())
       .then(data => {
         if (data.feedback_counts) {
@@ -27,6 +30,7 @@ const Dashboard = () => {
       })
       .catch(err => console.error("Error fetching analytics:", err));
   }, []);
+
   return (
     <div style={{ padding: 30, fontFamily: 'Arial' }}>
       <h2 style={{ textAlign: 'center' }}>📊 Store Manager Dashboard</h2>
@@ -69,7 +73,7 @@ const MainApp = () => {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    fetch('http://localhost:5000/')
+    fetch(`${BACKEND_URL}/`)
       .then(res => res.json())
       .then(data => setMessage(data.message))
       .catch(() => setMessage("Could not connect to Flask backend"));
@@ -82,7 +86,7 @@ const MainApp = () => {
   const handleFetch = () => {
     if (!productId.trim()) return;
 
-    fetch(`http://localhost:5000/product/${productId}`)
+    fetch(`${BACKEND_URL}/product/${productId}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) {
@@ -91,7 +95,7 @@ const MainApp = () => {
         } else {
           setProduct(data);
           setError('');
-          fetch(`http://localhost:5000/product/${productId}/feedback-count`)
+          fetch(`${BACKEND_URL}/product/${productId}/feedback-count`)
             .then(res => res.json())
             .then(stats => setFeedbackStats(stats));
         }
@@ -102,7 +106,7 @@ const MainApp = () => {
   const sendFeedback = (type) => {
     if (!product) return;
 
-    fetch(`http://localhost:5000/product/${product.id}/feedback`, {
+    fetch(`${BACKEND_URL}/product/${product.id}/feedback`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ feedback_type: type })
@@ -112,7 +116,7 @@ const MainApp = () => {
         if (data.error) alert(data.error);
         else {
           alert("Thanks for your feedback!");
-          fetch(`http://localhost:5000/product/${product.id}/feedback-count`)
+          fetch(`${BACKEND_URL}/product/${product.id}/feedback-count`)
             .then(res => res.json())
             .then(stats => setFeedbackStats(stats));
         }
@@ -125,7 +129,7 @@ const MainApp = () => {
       return;
     }
 
-    fetch(`http://localhost:5000/product/${product.id}/report`, {
+    fetch(`${BACKEND_URL}/product/${product.id}/report`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ report_reason: reportReason })
@@ -141,69 +145,71 @@ const MainApp = () => {
   };
 
   const joinQueue = async () => {
-  if (!userName.trim()) {
-    alert("Please enter your name");
-    return;
-  }
-  try {
-    const res = await fetch("http://localhost:5000/queue/join", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_name: userName, store_name: selectedStore })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setToken(data.token_number);
-      setJoinTime(data.join_time); // optional, if returned
-    } else {
-      alert(data.error || "Join failed");
+    if (!userName.trim()) {
+      alert("Please enter your name");
+      return;
     }
-  } catch (err) {
-    alert("Server error");
-  }
-};
-const checkMyStatus = async () => {
-  if (!token || !selectedStore) return;
+    try {
+      const res = await fetch(`${BACKEND_URL}/queue/join`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name: userName, store_name: selectedStore })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setToken(data.token_number);
+        setJoinTime(data.join_time); // optional
+      } else {
+        alert(data.error || "Join failed");
+      }
+    } catch (err) {
+      alert("Server error");
+    }
+  };
 
-  try {
-    const res = await fetch(`http://localhost:5000/queue/status/${selectedStore}/${token}`);
-    const data = await res.json();
-    if (res.ok) {
-      setTokenPosition(data.position);
-      setWaitTime(data.estimated_wait_time);
-    } else {
-      alert(data.error || "Failed to get token position");
-    }
-  } catch (err) {
-    alert("Error connecting to backend");
-  }
-};
-const leaveQueue = async () => {
-  if (!token || !selectedStore) return;
+  const checkMyStatus = async () => {
+    if (!token || !selectedStore) return;
 
-  try {
-    const res = await fetch(`http://localhost:5000/queue/leave`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token_number: token, store_name: selectedStore })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      alert("You have left the queue");
-      setToken(null);
-      setTokenPosition(null);
-      setWaitTime(null);
-    } else {
-      alert(data.error || "Failed to leave queue");
+    try {
+      const res = await fetch(`${BACKEND_URL}/queue/status/${selectedStore}/${token}`);
+      const data = await res.json();
+      if (res.ok) {
+        setTokenPosition(data.position);
+        setWaitTime(data.estimated_wait_time);
+      } else {
+        alert(data.error || "Failed to get token position");
+      }
+    } catch (err) {
+      alert("Error connecting to backend");
     }
-  } catch (err) {
-    alert("Error while trying to leave queue");
-  }
-};
+  };
+
+  const leaveQueue = async () => {
+    if (!token || !selectedStore) return;
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/queue/leave`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token_number: token, store_name: selectedStore })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        alert("You have left the queue");
+        setToken(null);
+        setTokenPosition(null);
+        setWaitTime(null);
+      } else {
+        alert(data.error || "Failed to leave queue");
+      }
+    } catch (err) {
+      alert("Error while trying to leave queue");
+    }
+  };
 
   const getQueueStatus = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/queue/status/${selectedStore}`);
+      const res = await fetch(`${BACKEND_URL}/queue/status/${selectedStore}`);
       const data = await res.json();
       if (res.ok) {
         setQueueSize(data.queue_size);
@@ -214,6 +220,7 @@ const leaveQueue = async () => {
       setQueueSize("Server Down");
     }
   };
+
   return (
     <div style={{ padding: 20 }}>
       <h1>{t('welcome')}</h1>
@@ -273,6 +280,7 @@ const leaveQueue = async () => {
     </div>
   );
 };
+
 // App with Routing
 const App = () => {
   return (
@@ -290,4 +298,5 @@ const App = () => {
     </Router>
   );
 };
+
 export default App;

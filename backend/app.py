@@ -4,14 +4,17 @@ from queue_routes import queue_bp
 from db import close_db
 import mysql.connector
 from flask import render_template
+import os
 
 def get_connection():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Shashi@1415",  # use your password here
-        database="retailsphere"
+        host=os.getenv("MYSQLHOST", "localhost"),
+        user=os.getenv("MYSQLUSER", "root"),
+        password=os.getenv("MYSQLPASSWORD"),
+        database=os.getenv("MYSQLDATABASE"),
+        port=int(os.getenv("MYSQLPORT", 3306))
     )
+
 
 app = Flask(__name__)
 CORS(app)
