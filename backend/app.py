@@ -1,26 +1,14 @@
-from flask import Flask, jsonify,request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from queue_routes import queue_bp
-from db import close_db
-import mysql.connector
-from flask import render_template
+from db import get_db, close_db
 import os
-
-def get_connection():
-    return mysql.connector.connect(
-        host=os.getenv("MYSQLHOST", "localhost"),
-        user=os.getenv("MYSQLUSER", "root"),
-        password=os.getenv("MYSQLPASSWORD"),
-        database=os.getenv("MYSQLDATABASE"),
-        port=int(os.getenv("MYSQLPORT", 3306))
-    )
-
 
 app = Flask(__name__)
 CORS(app)
+app.register_blueprint(queue_bp)
 
 queues = {}  # In-memory store for queues
-app.register_blueprint(queue_bp)
 
 @app.teardown_appcontext
 def teardown_db(exception):
@@ -34,7 +22,7 @@ def queue_page():
 def get_token_status(store_name, token):
     store_queue = queues.get(store_name, [])
     if token in store_queue:
-        position = store_queue.index(token)  # 0 means first in line
+        position = store_queue.index(token)
         return jsonify({"position": position})
     else:
         return jsonify({"error": "Token not found"}), 404
@@ -42,7 +30,7 @@ def get_token_status(store_name, token):
 @app.route('/dashboard/analytics')
 def dashboard_analytics():
     try:
-        conn = get_connection()
+        conn = get_db()
         cursor = conn.cursor(dictionary=True)
 
         # 1. Total products
@@ -86,8 +74,6 @@ def dashboard_analytics():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-
 @app.route('/')
 def home():
     return {"message": "RetailSphere Backend Running"}
@@ -95,18 +81,18 @@ def home():
 @app.route('/test-db')
 def test_db():
     try:
-        conn = get_connection()
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM products")
         count = cursor.fetchone()[0]
         return f"Total products: {count}"
     except Exception as e:
         return f"Error: {str(e)}"
-    
+
 @app.route('/product/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     try:
-        conn = get_connection()
+        conn = get_db()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM products WHERE id = %s", (product_id,))
         product = cursor.fetchone()
@@ -117,7 +103,6 @@ def get_product(product_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/product/<int:product_id>/feedback', methods=['POST'])
 def submit_feedback(product_id):
     try:
@@ -125,7 +110,7 @@ def submit_feedback(product_id):
         if feedback_type not in ['like', 'neutral', 'dislike']:
             return jsonify({"error": "Invalid feedback type"}), 400
 
-        conn = get_connection()
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO product_feedback (product_id, feedback_type) VALUES (%s, %s)",
@@ -135,7 +120,7 @@ def submit_feedback(product_id):
         return jsonify({"message": "Feedback submitted"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route('/product/<int:product_id>/report', methods=['POST'])
 def report_product(product_id):
     try:
@@ -145,7 +130,7 @@ def report_product(product_id):
         if not reason:
             return jsonify({"error": "Missing report reason"}), 400
 
-        conn = get_connection()
+        conn = get_db()
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO product_reports (product_id, report_reason) VALUES (%s, %s)",
@@ -155,11 +140,11 @@ def report_product(product_id):
         return jsonify({"message": "Report submitted successfully!"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route('/product/<int:product_id>/feedback-count', methods=['GET'])
 def get_feedback_count(product_id):
     try:
-        conn = get_connection()
+        conn = get_db()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
             SELECT feedback_type, COUNT(*) as count 
@@ -169,7 +154,6 @@ def get_feedback_count(product_id):
         """, (product_id,))
         rows = cursor.fetchall()
 
-        # Convert list to dict
         counts = {"like": 0, "neutral": 0, "dislike": 0}
         for row in rows:
             counts[row['feedback_type']] = row['count']
@@ -177,9 +161,6 @@ def get_feedback_count(product_id):
         return jsonify(counts)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
-
 
 if __name__ == '__main__':
-    
     app.run(debug=True)
