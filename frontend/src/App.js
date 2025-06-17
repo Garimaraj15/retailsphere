@@ -7,7 +7,7 @@ import WhisprCart from './pages/WhisprCart'; // ✅
 import { useTranslation } from 'react-i18next';
 
 // ✅ Define backend URL once
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Dashboard Component
 const Dashboard = () => {
