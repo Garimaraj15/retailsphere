@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { logicTree } from '../data/whisprTree'; // Adjust the path if needed
+import axios from 'axios';
 
 const WhisprCart = () => {
   const [messages, setMessages] = useState(() => {
@@ -8,80 +8,71 @@ const WhisprCart = () => {
   });
 
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem("whisprMessages", JSON.stringify(messages));
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage = { text: input, sender: 'user' };
-
-    // Smart keyword-based matching
-    let responseText = "Sorry, I couldn't find that item.";
-    const inputLower = input.toLowerCase();
-
-    for (const keyword in logicTree) {
-      if (inputLower.includes(keyword)) {
-        responseText = logicTree[keyword];
-        break;
-      }
-    }
-
-    const botMessage = { text: responseText, sender: 'bot' };
-
-    setMessages([...messages, userMessage, botMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setLoading(true);
+
+    try {
+      const res = await axios.post('https://retailsphere-4.onrender.com/chatbot/ask', {
+        message: input
+      });
+
+      const botMessage = {
+        text: res.data.response || "Sorry, I didn’t understand that.",
+        sender: 'bot'
+      };
+
+      setMessages(prev => [...prev, botMessage]);
+    } catch (err) {
+      console.error("Chatbot error:", err);
+      setMessages(prev => [...prev, {
+        text: "Something went wrong while connecting to WhisprCart backend.",
+        sender: 'bot'
+      }]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleMic = () => {
-  if (!('webkitSpeechRecognition' in window)) {
-    alert("Sorry, your browser doesn't support speech recognition.");
-    return;
-  }
+    if (!('webkitSpeechRecognition' in window)) {
+      alert("Sorry, your browser doesn't support speech recognition.");
+      return;
+    }
 
-  console.log("🎤 Starting speech recognition...");
-  const recognition = new window.webkitSpeechRecognition();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
+    const recognition = new window.webkitSpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
-  recognition.onstart = () => {
-    console.log("🎙️ Listening started...");
+    recognition.onresult = (event) => {
+      const speechText = event.results[0][0].transcript;
+      setInput(speechText);
+      setTimeout(() => handleSend(), 500);
+    };
+
+    recognition.start();
   };
-
-  recognition.onspeechend = () => {
-    console.log("🛑 Speech ended.");
-    recognition.stop();
-  };
-
-  recognition.onresult = (event) => {
-    const speechText = event.results[0][0].transcript;
-    console.log("✅ You said:", speechText);
-    setInput(speechText);
-    setTimeout(() => handleSend(), 500);
-  };
-
-  recognition.onerror = (event) => {
-    console.error("❌ Speech recognition error:", event.error);
-  };
-
-  recognition.start();
-};
-
 
   return (
     <div className="p-4 max-w-xl mx-auto bg-white rounded-xl shadow-md mt-8">
-      <h2 className="text-xl font-bold mb-4">🛒 WhisprCart Assistant</h2>
+      <h2 className="text-xl font-bold mb-4 text-indigo-600 text-center">🛒 WhisprCart Assistant</h2>
       <div className="h-64 overflow-y-auto border p-2 rounded mb-4 bg-gray-50">
         {messages.map((msg, index) => (
           <div
             key={index}
             className={`mb-2 text-sm ${
-              msg.sender === 'user'
-                ? 'text-right text-blue-600'
-                : 'text-left text-green-700'
+              msg.sender === 'user' ? 'text-right text-blue-600' : 'text-left text-green-700'
             }`}
           >
             {msg.text}
@@ -91,16 +82,17 @@ const WhisprCart = () => {
       <div className="flex">
         <input
           type="text"
-          placeholder="Ask about an item (e.g., milk)"
+          placeholder="Ask about a product or offer..."
           className="flex-1 border p-2 rounded-l"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
         <button
           onClick={handleSend}
-          className="bg-blue-500 text-white px-4"
+          className="bg-indigo-600 text-white px-4 disabled:opacity-50"
+          disabled={loading}
         >
-          Send
+          {loading ? "..." : "Send"}
         </button>
         <button
           onClick={handleMic}
