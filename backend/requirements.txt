@@ -3,4 +3,4 @@ Flask-Cors==3.0.10
 mysql-connector-python==8.2.0
 gunicorn
 python-dotenv==1.0.1
-openai==1.88.0
+requests==2.31.0
