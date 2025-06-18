@@ -10,18 +10,17 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_store_data(store_name):
+def get_store_data(_store_name):  # store_name no longer used
     db = get_db()
     cursor = db.cursor()
-    
-    # Removed 'stock' from query
-    cursor.execute("SELECT name, description, price FROM products WHERE store_name = %s", (store_name,))
+
+    # Fetch all products without filtering by store
+    cursor.execute("SELECT name, description, price FROM products")
     products = cursor.fetchall()
 
     if not products:
-        return f"No products found for store '{store_name}'."
+        return "No products found."
 
-    # Format response without stock
     return "\n".join(
         [f"{name} - {desc} - ₹{price}" for name, desc, price in products]
     )
@@ -31,12 +30,12 @@ def get_store_data(store_name):
 def ask_chatbot():
     data = request.get_json()
     message = data.get("message", "")
-    store = data.get("store_name", "")
+    store = data.get("store_name", "")  # still required by API
 
     if not message or not store:
         return jsonify({"error": "Missing message or store_name"}), 400
 
-    store_data = get_store_data(store)
+    store_data = get_store_data(store)  # store name is ignored internally
 
     try:
         completion = openai.ChatCompletion.create(
