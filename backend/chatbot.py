@@ -53,12 +53,19 @@ def ask_groq_chat(message, store_data):
             json=payload
         )
 
+        response.raise_for_status()  # Raise HTTPError for bad responses
         data = response.json()
-        return data['choices'][0]['message']['content'].strip()
+        print("[DEBUG] Groq response:", data)  # Debug print
+
+        # ✅ Safe check for expected response
+        if "choices" in data and data["choices"]:
+            return data["choices"][0]["message"]["content"].strip()
+        else:
+            return f"Error: Unexpected response format: {data}"
 
     except Exception as e:
         print("[ERROR] Groq API:", e)
-        return str(e)
+        return f"Error: {str(e)}"
 
 
 @chatbot_bp.route('/chatbot/ask', methods=['POST'])
