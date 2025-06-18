@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 from queue_routes import queue_bp
 from db import get_db
+from chatbot import chatbot_bp
 import os
 
 app = Flask(__name__)
@@ -9,7 +10,7 @@ CORS(app)
 app.register_blueprint(queue_bp)
 
 queues = {}  # In-memory store for queues
-
+app.register_blueprint(chatbot_bp)
 
 @app.route('/queue')
 def queue_page():
