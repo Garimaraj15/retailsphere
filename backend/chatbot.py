@@ -56,4 +56,4 @@ def ask_chatbot():
 
     except Exception as e:
         print("[ERROR] Chatbot:", e)
-        return jsonify({"error": "Something went wrong"}), 500
+        return jsonify({"error": str(e)}), 500  # <-- Return real error message
