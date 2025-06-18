@@ -66,7 +66,18 @@ const WhisprCart = () => {
 
   return (
     <div className="p-4 max-w-xl mx-auto bg-white rounded-xl shadow-md mt-8">
-      <h2 className="text-xl font-bold mb-4 text-indigo-600 text-center">🛒 WhisprCart Assistant</h2>
+      <div className="flex justify-between mb-2">
+        <h2 className="text-xl font-bold text-indigo-600">🛒 WhisprCart Assistant</h2>
+        <button
+          className="text-sm text-red-600 underline"
+          onClick={() => {
+            localStorage.removeItem("whisprMessages");
+            setMessages([]);
+          }}
+        >
+          Clear Chat
+        </button>
+      </div>
       <div className="h-64 overflow-y-auto border p-2 rounded mb-4 bg-gray-50">
         {messages.map((msg, index) => (
           <div
