@@ -14,7 +14,6 @@ def get_store_data():
     db = get_db()
     cursor = db.cursor()
 
-    # Fetch all products
     cursor.execute("SELECT name, description, price FROM products")
     products = cursor.fetchall()
 
@@ -34,7 +33,7 @@ def ask_groq_chat(message, store_data):
         }
 
         payload = {
-            "model": "mixtral-8x7b-32768",  # or "llama3-70b-8192"
+            "model": "llama3-8b-8192",  # or "mixtral-8x7b-32768" if preferred
             "messages": [
                 {
                     "role": "system",
@@ -53,19 +52,21 @@ def ask_groq_chat(message, store_data):
             json=payload
         )
 
-        response.raise_for_status()  # Raise HTTPError for bad responses
-        data = response.json()
-        print("[DEBUG] Groq response:", data)  # Debug print
+        # Raise error if status is not 2XX
+        response.raise_for_status()
 
-        # ✅ Safe check for expected response
-        if "choices" in data and data["choices"]:
-            return data["choices"][0]["message"]["content"].strip()
-        else:
-            return f"Error: Unexpected response format: {data}"
+        data = response.json()
+        print("[DEBUG] Groq API success:", data)
+        return {"success": True, "reply": data['choices'][0]['message']['content'].strip()}
+
+    except requests.exceptions.HTTPError as http_err:
+        print("[HTTP ERROR]", http_err)
+        print("[RESPONSE TEXT]", response.text)
+        return {"success": False, "error": response.text}
 
     except Exception as e:
         print("[ERROR] Groq API:", e)
-        return f"Error: {str(e)}"
+        return {"success": False, "error": str(e)}
 
 
 @chatbot_bp.route('/chatbot/ask', methods=['POST'])
@@ -77,9 +78,9 @@ def ask_chatbot():
         return jsonify({"error": "Missing message"}), 400
 
     store_data = get_store_data()
-    reply = ask_groq_chat(message, store_data)
+    result = ask_groq_chat(message, store_data)
 
-    if reply and not reply.lower().startswith("error:"):
-        return jsonify({"response": reply})
+    if result["success"]:
+        return jsonify({"response": result["reply"]})
     else:
-        return jsonify({"error": reply or "Unknown error"}), 500
+        return jsonify({"error": result["error"]}), 500
