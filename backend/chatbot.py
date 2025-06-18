@@ -58,7 +58,7 @@ def ask_groq_chat(message, store_data):
 
     except Exception as e:
         print("[ERROR] Groq API:", e)
-        return None
+        return str(e)
 
 
 @chatbot_bp.route('/chatbot/ask', methods=['POST'])
@@ -72,7 +72,7 @@ def ask_chatbot():
     store_data = get_store_data()
     reply = ask_groq_chat(message, store_data)
 
-    if reply:
+    if reply and not reply.lower().startswith("error:"):
         return jsonify({"response": reply})
     else:
-        return jsonify({"error": "Something went wrong"}), 500
+        return jsonify({"error": reply or "Unknown error"}), 500
