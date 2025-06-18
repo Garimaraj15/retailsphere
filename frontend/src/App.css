@@ -1,4 +1,10 @@
-/* App.css */
+/* General Layout */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
 
 .App {
   text-align: center;
@@ -7,7 +13,6 @@
   background-color: #f5f7fa;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
@@ -41,9 +46,9 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 800px;
+  margin-bottom: 2rem;
 }
 
-/* Header text styling */
 .App-header h1,
 .App-header h2,
 .App-header p {
@@ -57,6 +62,82 @@
 .App-header p {
   font-size: 1.1rem;
   opacity: 0.85;
+}
+
+/* Navigation Bar */
+nav {
+  background-color: #ffffff;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+nav a:hover {
+  color: #007bff;
+}
+
+/* Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px;
+  padding: 1rem;
+}
+
+.product-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+.product-card img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.product-card h3 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+}
+
+.product-card p {
+  color: #2e7d32;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.product-card button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.product-card button:hover {
+  background-color: #0056b3;
 }
 
 /* Link Styling */
@@ -89,5 +170,13 @@
 
   .App-header p {
     font-size: 1rem;
+  }
+
+  .product-card h3 {
+    font-size: 1rem;
+  }
+
+  .product-card p {
+    font-size: 0.9rem;
   }
 }
