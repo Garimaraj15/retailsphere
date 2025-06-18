@@ -13,14 +13,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 def get_store_data(store_name):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT name, description, price, stock FROM products WHERE store_name = %s", (store_name,))
+    
+    # Removed 'stock' from query
+    cursor.execute("SELECT name, description, price FROM products WHERE store_name = %s", (store_name,))
     products = cursor.fetchall()
 
     if not products:
         return f"No products found for store '{store_name}'."
 
+    # Format response without stock
     return "\n".join(
-        [f"{name} - {desc} - ₹{price}, stock: {stock}" for name, desc, price, stock in products]
+        [f"{name} - {desc} - ₹{price}" for name, desc, price in products]
     )
 
 
