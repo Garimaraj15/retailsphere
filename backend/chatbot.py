@@ -7,14 +7,13 @@ from db import get_db  # your existing DB connection utility
 chatbot_bp = Blueprint('chatbot', __name__)
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def get_store_data():
     db = get_db()
     cursor = db.cursor()
 
-    # Fetch all products
     cursor.execute("SELECT name, description, price FROM products")
     products = cursor.fetchall()
 
@@ -37,7 +36,7 @@ def ask_chatbot():
     store_data = get_store_data()
 
     try:
-        completion = openai.ChatCompletion.create(
+        completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {
@@ -56,4 +55,4 @@ def ask_chatbot():
 
     except Exception as e:
         print("[ERROR] Chatbot:", e)
-        return jsonify({"error": str(e)}), 500  # <-- Return real error message
+        return jsonify({"error": str(e)}), 500
