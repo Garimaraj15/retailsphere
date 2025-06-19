@@ -19,32 +19,33 @@ const QRScanner = () => {
       { facingMode: "environment" },
       config,
       async (decodedText) => {
-  if (decodedText !== scannedData) {
-    setScannedData(decodedText);
-    html5QrCode.stop().then(() => {
-      console.log("QR scanning stopped after successful read.");
-    });
+        if (decodedText !== scannedData) {
+          setScannedData(decodedText);
+          html5QrCode.stop().then(() => {
+            console.log("QR scanning stopped after successful read.");
+          });
 
-    console.log("✅ RAW SCANNED TEXT:", decodedText);
+          console.log("✅ RAW SCANNED TEXT:", decodedText);
 
-    // Extract product ID from full URL
-    const match = decodedText.match(/\/product\/(\d+)/);
-    const productId = match ? match[1] : null;
+          try {
+            const url = new URL(decodedText); // parse URL
+            const match = url.pathname.match(/\/product\/(\d+)/);
+            const productId = match ? match[1] : null;
 
-    if (!productId) {
-      alert("Invalid QR code: No product ID found.");
-      return;
-    }
+            if (!productId) {
+              alert("Invalid QR code: No product ID found.");
+              return;
+            }
 
-    try {
-      await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
-      navigate(`/product/${productId}`);
-    } catch (err) {
-      alert("Product not found.");
-    }
-  }
-}
-,
+            // Optional: validate product exists
+            await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
+            navigate(`/product/${productId}`);
+          } catch (err) {
+            console.error("❌ Error:", err);
+            alert("Invalid QR code or product not found.");
+          }
+        }
+      },
       (error) => {
         console.warn("QR Scan Error:", error);
       }
