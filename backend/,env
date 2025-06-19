@@ -1,0 +1,6 @@
+DB_HOST=mainline.proxy.rlwy.net
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=DECIeJrUCtGtwwMKFqGsUulxGxvwjBVr
+DB_NAME=railway
+GROQ_API_KEY=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
