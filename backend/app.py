@@ -164,6 +164,10 @@ def get_feedback_count(product_id):
         return jsonify(counts)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+def serve_react(id=None):
+    return send_from_directory(app.static_folder, "index.html")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
