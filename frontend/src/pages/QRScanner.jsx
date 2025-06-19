@@ -38,7 +38,7 @@ const QRScanner = () => {
           }
 
           try {
-            await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
+            await axios.get(`https://retailsphere-frontend.onrender.com/product/${productId}`);
             navigate(`/product/${productId}`);
           } catch (err) {
             alert("Product not found.");
