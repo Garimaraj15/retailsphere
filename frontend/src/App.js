@@ -6,7 +6,7 @@ import {
 import WhisprCart from './pages/WhisprCart'; // ✅
 import { useTranslation } from 'react-i18next';
 import QRScanner from './pages/QRScanner'; // ✅
-import { Link } from 'react-router-dom';
+import ProductDetails from './pages/ProductDetails'; // ✅ NEW
 
 // ✅ Define backend URL once
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -287,19 +287,20 @@ const MainApp = () => {
 const App = () => {
   return (
     <Router>
-      <nav style={{ padding: 10, backgroundColor: '#f5f5f5' }}>
-        <Link to="/" style={{ marginRight: 20 }}>🏠 Home</Link>
-        <Link to="/dashboard" style={{ marginRight: 20 }}>📊 Dashboard</Link>
-        <Link to="/whisprcart">🛒 WhisprCart</Link>
-        <Link to="/scan" className="text-blue-600 underline">Scan a Product QR Code</Link>
-      </nav>
-      <Routes>
-        <Route path="/" element={<MainApp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/whisprcart" element={<WhisprCart />} />
-        <Route path="/scan" element={<QRScanner />} />
-      </Routes>
-    </Router>
+  <nav style={{ padding: 10, backgroundColor: '#f5f5f5' }}>
+    <Link to="/" style={{ marginRight: 20 }}>🏠 Home</Link>
+    <Link to="/dashboard" style={{ marginRight: 20 }}>📊 Dashboard</Link>
+    <Link to="/whisprcart">🛒 WhisprCart</Link>
+    <Link to="/scan" className="text-blue-600 underline">Scan a Product QR Code</Link>
+  </nav>
+  <Routes>
+    <Route path="/" element={<MainApp />} />
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/whisprcart" element={<WhisprCart />} />
+    <Route path="/scan" element={<QRScanner />} />
+    <Route path="/product/:id" element={<ProductDetails />} /> {/* ✅ NEW */}
+  </Routes>
+</Router>
   );
 };
 
