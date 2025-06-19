@@ -19,6 +19,7 @@ const QRScanner = () => {
       { facingMode: "environment" },
       config,
       async (decodedText) => {
+        console.log("✅ RAW SCANNED TEXT:", decodedText);
         if (decodedText !== scannedData) {
           setScannedData(decodedText);
           html5QrCode.stop().then(() => {
