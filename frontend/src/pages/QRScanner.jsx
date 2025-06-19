@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // ✅ For navigation
+import { useNavigate } from 'react-router-dom';
 
 const QRScanner = () => {
   const [scannedData, setScannedData] = useState('');
   const scannerRef = useRef(null);
   const qrCodeRegionId = "html5qr-code-region";
-  const navigate = useNavigate(); // ✅ Init navigator
+  const navigate = useNavigate();
 
   useEffect(() => {
     const html5QrCode = new Html5Qrcode(qrCodeRegionId);
@@ -23,15 +23,27 @@ const QRScanner = () => {
           setScannedData(decodedText);
           html5QrCode.stop().then(() => {
             console.log("QR scanning stopped after first successful read.");
-          });
+          }).catch((e) => console.error("Stop error:", e));
 
-          const productId = decodedText.replace(/\D/g, '');
+          // ✅ Extract product ID from the decoded Cloudinary URL
+          const match = decodedText.match(/ID_(\d+)_/i);
+          const productId = match ? match[1] : null;
+
+          if (!productId) {
+            alert("Invalid QR code format: No product ID found.");
+            return;
+          }
+
           try {
-            // Optional: check if product exists first
-            await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
-            navigate(`/product/${productId}`); // ✅ Redirect to product details page
+            const res = await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
+            if (res.data && !res.data.error) {
+              navigate(`/product/${productId}`);
+            } else {
+              alert("Product not found.");
+            }
           } catch (err) {
-            alert("Scanned QR code is invalid or product not found.");
+            console.error(err);
+            alert("Failed to fetch product. Please try again.");
           }
         }
       },
