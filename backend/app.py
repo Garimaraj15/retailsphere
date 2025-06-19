@@ -7,10 +7,14 @@ import os
 
 app = Flask(__name__, static_folder="frontend_build", static_url_path="/")
 CORS(app)
-app.register_blueprint(queue_bp)
 
-queues = {}  # In-memory store for queues
+# Register Blueprints
+app.register_blueprint(queue_bp)
 app.register_blueprint(chatbot_bp)
+
+queues = {}  # In-memory queue store
+
+# ========== STATIC + DB ROUTES ==========
 
 @app.route('/queue')
 def queue_page():
@@ -24,11 +28,10 @@ def get_token_status(store_name, token):
         return jsonify({"position": position})
     else:
         return jsonify({"error": "Token not found"}), 404
-    
+
 @app.route("/static/<path:path>")
 def serve_static(path):
     return send_from_directory(os.path.join(app.static_folder, "static"), path)
-
 
 @app.route('/dashboard/analytics')
 def dashboard_analytics():
@@ -36,11 +39,9 @@ def dashboard_analytics():
         conn = get_db()
         cursor = conn.cursor(dictionary=True)
 
-        # 1. Total products
         cursor.execute("SELECT COUNT(*) AS total_products FROM products")
         total_products = cursor.fetchone()['total_products']
 
-        # 2. Feedback counts
         cursor.execute("""
             SELECT feedback_type, COUNT(*) AS count
             FROM product_feedback
@@ -51,11 +52,9 @@ def dashboard_analytics():
         for row in feedback_data:
             feedback_counts[row['feedback_type']] = row['count']
 
-        # 3. Total reports
         cursor.execute("SELECT COUNT(*) AS total_reports FROM product_reports")
         total_reports = cursor.fetchone()['total_reports']
 
-        # 4. Most liked products
         cursor.execute("""
             SELECT p.id, p.name, COUNT(f.id) AS likes
             FROM products p
@@ -76,10 +75,6 @@ def dashboard_analytics():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route('/')
-def home():
-    return {"message": "RetailSphere Backend Running"}
 
 @app.route('/test-db')
 def test_db():
@@ -164,11 +159,19 @@ def get_feedback_count(product_id):
         return jsonify(counts)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+# ========== REACT FALLBACK ROUTES ==========
+
+@app.route("/")
+@app.route("/scan")
+@app.route("/product/<int:id>")
+@app.route("/dashboard")
+@app.route("/whisprcart")
 def serve_react(id=None):
     return send_from_directory(app.static_folder, "index.html")
 
 
+# ========== ENTRY POINT ==========
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 10000)))
-
