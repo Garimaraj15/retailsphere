@@ -19,40 +19,32 @@ const QRScanner = () => {
       { facingMode: "environment" },
       config,
       async (decodedText) => {
-        console.log("✅ RAW SCANNED TEXT:", decodedText);
+  if (decodedText !== scannedData) {
+    setScannedData(decodedText);
+    html5QrCode.stop().then(() => {
+      console.log("QR scanning stopped after successful read.");
+    });
 
-        if (decodedText !== scannedData) {
-          setScannedData(decodedText);
-          html5QrCode.stop().then(() => {
-            console.log("QR scanning stopped after first successful read.");
-          }).catch((e) => console.error("Stop error:", e));
+    console.log("✅ RAW SCANNED TEXT:", decodedText);
 
-          // ✅ Log scanned result
-          console.log("Scanned QR Text:", decodedText);
+    // Extract product ID from full URL
+    const match = decodedText.match(/\/product\/(\d+)/);
+    const productId = match ? match[1] : null;
 
-          // ✅ Extract product ID from Cloudinary format
-          const match = decodedText.match(/\/product\/(\d+)/);
-                const productId = match ? match[1] : null;
+    if (!productId) {
+      alert("Invalid QR code: No product ID found.");
+      return;
+    }
 
-                if (!productId) {
-                alert("Invalid QR code: No product ID found.");
-                return;
-                }
-
-
-          try {
-            const res = await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
-            if (res.data && !res.data.error) {
-              navigate(`/product/${productId}`);
-            } else {
-              alert("Product not found.");
-            }
-          } catch (err) {
-            console.error(err);
-            alert("Scanned QR code is invalid or product not found.");
-          }
-        }
-      },
+    try {
+      await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
+      navigate(`/product/${productId}`);
+    } catch (err) {
+      alert("Product not found.");
+    }
+  }
+}
+,
       (error) => {
         console.warn("QR Scan Error:", error);
       }
