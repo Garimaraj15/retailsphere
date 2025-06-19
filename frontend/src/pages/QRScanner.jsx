@@ -20,6 +20,7 @@ const QRScanner = () => {
       config,
       async (decodedText) => {
         console.log("✅ RAW SCANNED TEXT:", decodedText);
+
         if (decodedText !== scannedData) {
           setScannedData(decodedText);
           html5QrCode.stop().then(() => {
@@ -30,13 +31,14 @@ const QRScanner = () => {
           console.log("Scanned QR Text:", decodedText);
 
           // ✅ Extract product ID from Cloudinary format
-          const match = decodedText.match(/ID_(\d+)_/i);
-          const productId = match?.[1];
+          const match = decodedText.match(/\/product\/(\d+)/);
+                const productId = match ? match[1] : null;
 
-          if (!productId) {
-            alert("Invalid QR code format: No product ID found.");
-            return;
-          }
+                if (!productId) {
+                alert("Invalid QR code: No product ID found.");
+                return;
+                }
+
 
           try {
             const res = await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
