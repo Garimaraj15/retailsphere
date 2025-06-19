@@ -10,61 +10,63 @@ const QRScanner = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const html5QrCode = new Html5Qrcode(qrCodeRegionId);
-    scannerRef.current = html5QrCode;
+  const html5QrCode = new Html5Qrcode(qrCodeRegionId);
+  scannerRef.current = html5QrCode;
 
-    const config = { fps: 10, qrbox: 250 };
+  const config = { fps: 10, qrbox: 250 };
 
+  const startScanner = () => {
     html5QrCode.start(
       { facingMode: "environment" },
       config,
       async (decodedText) => {
         if (decodedText !== scannedData) {
           setScannedData(decodedText);
+          console.log("✅ RAW SCANNED TEXT:", decodedText);
+
           html5QrCode.stop().then(() => {
             console.log("QR scanning stopped after successful read.");
           });
 
-          console.log("✅ RAW SCANNED TEXT:", decodedText);
+          // Support both /product/5 and Cloudinary filenames like ID_5_abc.png
+          const match = decodedText.match(/\/product\/(\d+)|ID_(\d+)_/);
+          const productId = match ? (match[1] || match[2]) : null;
+
+          if (!productId) {
+            alert("Invalid QR code: No product ID found.");
+            return;
+          }
 
           try {
-            const url = new URL(decodedText); // parse URL
-            const match = url.pathname.match(/\/product\/(\d+)/);
-            const productId = match ? match[1] : null;
-
-            if (!productId) {
-              alert("Invalid QR code: No product ID found.");
-              return;
-            }
-
-            // Optional: validate product exists
             await axios.get(`https://retailsphere-4.onrender.com/product/${productId}`);
             navigate(`/product/${productId}`);
           } catch (err) {
-            console.error("❌ Error:", err);
-            alert("Invalid QR code or product not found.");
+            alert("Product not found.");
           }
         }
       },
-      (error) => {
-        console.warn("QR Scan Error:", error);
-      }
-    ).catch(err => {
-      console.error("Unable to start QR scanner:", err);
-    });
+      (error) => console.warn("QR Scan Error:", error)
+    ).catch(err => console.error("Unable to start QR scanner:", err));
+  };
 
-    return () => {
-      html5QrCode.stop().then(() => {
-        html5QrCode.clear();
-      }).catch(err => console.error("Failed to stop scanner:", err));
-    };
-  }, [scannedData, navigate]);
+  // ✅ Add delay to ensure camera element is mounted
+  const timeoutId = setTimeout(startScanner, 500);
+
+  return () => {
+    clearTimeout(timeoutId);
+    html5QrCode.stop().then(() => html5QrCode.clear());
+  };
+}, [scannedData, navigate]);
 
   return (
     <div className="p-4 max-w-xl mx-auto bg-white rounded shadow mt-8">
       <h2 className="text-xl font-bold mb-4">📷 Scan Product QR</h2>
       <div id={qrCodeRegionId} className="w-full" />
-      {scannedData && <p className="mt-3 text-sm text-gray-600">Scanned: {scannedData}</p>}
+      {scannedData && (
+        <p className="mt-3 text-sm text-gray-600">
+          Scanned: <span className="font-mono">{scannedData}</span>
+        </p>
+      )}
     </div>
   );
 };

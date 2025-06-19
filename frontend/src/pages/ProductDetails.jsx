@@ -12,7 +12,7 @@ const ProductDetails = () => {
   useEffect(() => {
     axios.get(`${BACKEND_URL}/product/${id}`)
       .then(res => setProduct(res.data))
-      .catch(() => setError('Product not found'));
+      .catch(() => setError('Product not found or server error'));
   }, [id]);
 
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
@@ -20,6 +20,11 @@ const ProductDetails = () => {
 
   return (
     <div style={{ padding: 20 }}>
+      {/* 🔙 Go Back Button */}
+      <button onClick={() => window.history.back()} style={{ marginBottom: 10 }}>
+        🔙 Go Back
+      </button>
+
       <h2>{product.name}</h2>
       <p><b>Brand:</b> {product.brand}</p>
       <p><b>Price:</b> ₹{product.price}</p>
@@ -27,6 +32,7 @@ const ProductDetails = () => {
       <p><b>Ethical Tags:</b> {product.ethical_tags}</p>
       <p><b>Carbon Footprint:</b> {product.carbon_footprint}</p>
       <p><b>Trust Score:</b> {product.trust_score}</p>
+
       {product.image_url && (
         <img
           src={product.image_url}
