@@ -25,9 +25,12 @@ const QRScanner = () => {
             console.log("QR scanning stopped after first successful read.");
           }).catch((e) => console.error("Stop error:", e));
 
-          // ✅ Extract product ID from the decoded Cloudinary URL
+          // ✅ Log scanned result
+          console.log("Scanned QR Text:", decodedText);
+
+          // ✅ Extract product ID from Cloudinary format
           const match = decodedText.match(/ID_(\d+)_/i);
-          const productId = match ? match[1] : null;
+          const productId = match?.[1];
 
           if (!productId) {
             alert("Invalid QR code format: No product ID found.");
@@ -43,7 +46,7 @@ const QRScanner = () => {
             }
           } catch (err) {
             console.error(err);
-            alert("Failed to fetch product. Please try again.");
+            alert("Scanned QR code is invalid or product not found.");
           }
         }
       },
