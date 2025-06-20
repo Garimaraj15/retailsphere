@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ product.name }}</title>
+</head>
+<body>
+  <h2>{{ product.name }}</h2>
+  <p><b>Brand:</b> {{ product.brand }}</p>
+  <p><b>Price:</b> ₹{{ product.price }}</p>
+  <p><b>Description:</b> {{ product.description }}</p>
+  <p><b>Ethical Tags:</b> {{ product.ethical_tags }}</p>
+  <p><b>Carbon Footprint:</b> {{ product.carbon_footprint }}</p>
+  <p><b>Trust Score:</b> {{ product.trust_score }}</p>
+  {% if product.image_url %}
+    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width: 300px;" />
+  {% endif %}
+</body>
+</html>
