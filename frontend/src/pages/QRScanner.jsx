@@ -26,14 +26,16 @@ const QRScanner = () => {
                 setScannedData(decodedText);
                 console.log("✅ RAW SCANNED TEXT:", decodedText);
 
-                await html5QrCode.stop();
-                console.log("📴 QR scanning stopped.");
+                if (html5QrCode._isScanning) {
+                  await html5QrCode.stop();
+                  console.log("📴 QR scanning stopped.");
+                }
 
-                const match = decodedText.match(/\/product\/(\d+)|ID_(\d+)_/);
+                const match = decodedText.match(/product\/(\d+)|ID_(\d+)_/);
                 const productId = match ? (match[1] || match[2]) : null;
 
                 if (!productId) {
-                  alert("❌ Invalid QR code: No product ID found.");
+                  alert(`❌ Invalid QR code: No product ID found in "${decodedText}"`);
                   return;
                 }
 
@@ -55,12 +57,13 @@ const QRScanner = () => {
       }
     };
 
-    // Slight delay to ensure HTML is rendered before scanner starts
     const timeoutId = setTimeout(startScanner, 1000);
 
     return () => {
       clearTimeout(timeoutId);
-      html5QrCode.stop().then(() => html5QrCode.clear()).catch(() => {});
+      if (scannerRef.current) {
+        scannerRef.current.stop().then(() => scannerRef.current.clear()).catch(() => {});
+      }
     };
   }, [scannedData, navigate]);
 
@@ -68,10 +71,18 @@ const QRScanner = () => {
     <div className="p-4 max-w-xl mx-auto bg-white rounded shadow mt-8">
       <h2 className="text-xl font-bold mb-4">📷 Scan Product QR</h2>
       <div id={qrCodeRegionId} className="w-full aspect-square bg-gray-100" />
-      {scannedData && (
+
+      {scannedData ? (
         <p className="mt-3 text-sm text-gray-600">
           Scanned: <span className="font-mono">{scannedData}</span>
         </p>
+      ) : (
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          🔙 Go Back
+        </button>
       )}
     </div>
   );
