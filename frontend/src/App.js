@@ -263,6 +263,14 @@ const MainApp = () => {
           <p><b>Brand:</b> {product.brand}</p>
           <p><b>Price:</b> ₹{product.price}</p>
           <p><b>Description:</b> {product.description}</p>
+          {/* ✅ Add this to show image */}
+          {product.image_url && (
+            <img
+              src={product.image_url}
+              alt={product.name}
+              style={{ maxWidth: '300px', marginTop: '15px' }}
+            />
+          )}
 
           <h4>{t('howYouFeel')}</h4>
           <button onClick={() => sendFeedback('like')}>😀</button>
