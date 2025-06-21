@@ -76,12 +76,18 @@ def dashboard_analytics():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/product/<int:id>/page')  # ✅ Make sure this exists
+@app.route('/product/<int:id>/page')
 def render_product_page(id):
-    product = Product.query.get(id)
-    if not product:
-        return "Product not found", 404
-    return render_template("product_page.html", product=product)
+    try:
+        conn = get_db()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM products WHERE id = %s", (id,))
+        product = cursor.fetchone()
+        if not product:
+            return "Product not found", 404
+        return render_template("product_page.html", product=product)
+    except Exception as e:
+        return f"Internal Server Error: {e}", 500
 
 @app.route('/test-db')
 def test_db():
