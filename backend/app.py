@@ -87,20 +87,20 @@ def test_db():
     except Exception as e:
         return f"Error: {str(e)}"
 
-@app.route('/product/<int:product_id>')
-def render_product_page(product_id):
+@app.route('/product/<int:product_id>', methods=['GET'])
+def get_product(product_id):
     try:
         conn = get_db()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM products WHERE id = %s", (product_id,))
         product = cursor.fetchone()
         if product:
-            return render_template('product_page.html', product=product)
+            return jsonify(product)
         else:
-            return "Product not found", 404
+            return jsonify({"error": "Product not found"}), 404
     except Exception as e:
-        return f"Error: {str(e)}", 500
-    
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/product/<int:product_id>/feedback', methods=['POST'])
 def submit_feedback(product_id):
     try:
