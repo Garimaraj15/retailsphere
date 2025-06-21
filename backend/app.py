@@ -76,6 +76,13 @@ def dashboard_analytics():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/product/<int:id>/page')  # ✅ Make sure this exists
+def render_product_page(id):
+    product = Product.query.get(id)
+    if not product:
+        return "Product not found", 404
+    return render_template("product_page.html", product=product)
+
 @app.route('/test-db')
 def test_db():
     try:
