@@ -235,9 +235,9 @@ const MainApp = () => {
         <h2>{t('joinQueue')}</h2>
         <input value={userName} onChange={e => setUserName(e.target.value)} placeholder={t('enterName')} />
         <select value={selectedStore} onChange={e => setSelectedStore(e.target.value)}>
-          <option>Reliance Fresh</option>
-          <option>Big Bazaar</option>
-          <option>D-Mart</option>
+          <option>Walmart-U.S</option>
+          <option>Walmart-Canada</option>
+          <option>Walmart-China</option>
         </select>
         <button onClick={joinQueue}>{t('joinQueue')}</button>
         <p>{t('liveQueueSize')} <b>{selectedStore}</b>: {queueSize ?? '-'}</p>
