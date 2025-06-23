@@ -88,6 +88,58 @@ def render_product_page(id):
         return render_template("product_page.html", product=product)
     except Exception as e:
         return f"Internal Server Error: {e}", 500
+    
+
+@app.route('/dashboard/analytics/<int:product_id>')
+def dashboard_analytics_product(product_id):
+    try:
+        conn = get_db()
+        cursor = conn.cursor(dictionary=True)
+
+        # Get feedback counts for the specific product
+        cursor.execute("""
+            SELECT feedback_type, COUNT(*) AS count
+            FROM feedback
+            WHERE product_id = %s
+            GROUP BY feedback_type
+        """, (product_id,))
+        feedback_rows = cursor.fetchall()
+
+        feedback_counts = {'like': 0, 'neutral': 0, 'dislike': 0}
+        for row in feedback_rows:
+            feedback_type = row['feedback_type']
+            count = row['count']
+            if feedback_type in feedback_counts:
+                feedback_counts[feedback_type] = count
+
+        # Count number of reports for the product
+        cursor.execute("""
+            SELECT COUNT(*) AS total_reports
+            FROM feedback
+            WHERE product_id = %s AND is_reported = TRUE
+        """, (product_id,))
+        report_row = cursor.fetchone()
+        total_reports = report_row['total_reports'] if report_row else 0
+
+        return jsonify({
+            'feedback_counts': feedback_counts,
+            'total_reports': total_reports
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/products')
+def get_products():
+    try:
+        conn = get_db()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, name FROM products")
+        products = cursor.fetchall()
+        return jsonify(products)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/test-db')
 def test_db():
@@ -131,6 +183,39 @@ def submit_feedback(product_id):
         return jsonify({"message": "Feedback submitted"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/feedback', methods=['POST'])
+def add_feedback():
+    try:
+        data = request.get_json()
+        message = data.get('message')
+        timstamp = data.get('timstamp')
+
+        if not message:
+            return jsonify({'error': 'Message is required'}), 400
+
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO Feedback (message, timstamp) VALUES (%s, %s)", (message, timstamp))
+        conn.commit()
+        return jsonify({'status': 'success'}), 201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/feedback', methods=['GET'])
+def get_feedback():
+    try:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute("SELECT message, timstamp FROM Feedback ORDER BY id DESC")
+        results = cursor.fetchall()
+        feedback_list = [{'message': row[0], 'timstamp': row[1]} for row in results]
+        return jsonify(feedback_list)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/product/<int:product_id>/report', methods=['POST'])
 def report_product(product_id):

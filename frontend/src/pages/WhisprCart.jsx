@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Lottie from "lottie-react";
+import { motion } from "framer-motion";
+import { Link } from 'react-router-dom';
+import robotListeningAnimation from "../assets/lottie/robot-listening.json"; // Ensure the file exists at this path
 
 const WhisprCart = () => {
   const [messages, setMessages] = useState(() => {
@@ -65,52 +69,81 @@ const WhisprCart = () => {
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto bg-white rounded-xl shadow-md mt-8">
-      <div className="flex justify-between mb-2">
-        <h2 className="text-xl font-bold text-indigo-600">🛒 WhisprCart Assistant</h2>
-        <button
-          className="text-sm text-red-600 underline"
-          onClick={() => {
-            localStorage.removeItem("whisprMessages");
-            setMessages([]);
-          }}
+    <div className="min-h-screen bg-[#111a22] text-white flex items-center justify-center py-10 px-4">
+      <div className="w-full max-w-md bg-[#1a2633] rounded-3xl shadow-xl p-6 relative">
+
+        {/* Top Home Link */}
+        <div className="absolute top-4 left-4">
+          <Link to="/" className="hover:underline">Home</Link>
+        </div>
+
+        {/* Floating Robot */}
+        <motion.div
+          animate={{ y: [0, -20, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}
+          className="flex justify-center -mt-20 mb-6"
         >
-          Clear Chat
-        </button>
-      </div>
-      <div className="h-64 overflow-y-auto border p-2 rounded mb-4 bg-gray-50">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`mb-2 text-sm ${
-              msg.sender === 'user' ? 'text-right text-blue-600' : 'text-left text-green-700'
-            }`}
+          <Lottie
+            animationData={robotListeningAnimation}
+            loop
+            className="w-72 h-72" // Larger size
+          />
+        </motion.div>
+
+        {/* Header and Clear */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-purple-400">🤖 WhisprCart Bot</h2>
+          <button
+            onClick={() => {
+              localStorage.removeItem("whisprMessages");
+              setMessages([]);
+            }}
+            className="text-sm text-purple-300 underline"
           >
-            {msg.text}
-          </div>
-        ))}
-      </div>
-      <div className="flex">
-        <input
-          type="text"
-          placeholder="Ask about a product or offer..."
-          className="flex-1 border p-2 rounded-l"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button
-          onClick={handleSend}
-          className="bg-indigo-600 text-white px-4 disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? "..." : "Send"}
-        </button>
-        <button
-          onClick={handleMic}
-          className="bg-gray-300 text-black px-3 rounded-r"
-        >
-          🎤
-        </button>
+            Clear
+          </button>
+        </div>
+
+        {/* Chat Display */}
+        <div className="h-80 overflow-y-auto mb-4 px-2">
+          {messages.map((msg, index) => (
+            <div key={index} className={`flex mb-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
+                  msg.sender === 'user'
+                    ? 'bg-purple-600 text-white rounded-br-none'
+                    : 'bg-[#2b3d52] text-white rounded-bl-none'
+                }`}
+              >
+                {msg.text}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Input Area */}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            placeholder="Type your message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="flex-1 bg-[#233648] text-white border border-purple-600 rounded-full px-4 py-2 focus:outline-none"
+          />
+          <button
+            onClick={handleSend}
+            disabled={loading}
+            className="bg-purple-600 text-white px-4 py-2 rounded-full text-sm disabled:opacity-50"
+          >
+            {loading ? "..." : "OK"}
+          </button>
+          <button
+            onClick={handleMic}
+            className="bg-[#2b3d52] px-3 py-2 rounded-full text-lg text-white"
+          >
+            🎤
+          </button>
+        </div>
       </div>
     </div>
   );
