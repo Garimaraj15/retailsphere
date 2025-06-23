@@ -243,7 +243,7 @@ const HomePage = () => {
         </button>
       </div>
       {tokenPosition !== null && (
-        <p className="text-white">#{tokenPosition + 1} — <b>{waitTime} mins</b></p>
+        <p className="text-white">{tokenPosition + 1} — <b>{waitTime} minutes</b></p>
       )}
     </div>
   )}

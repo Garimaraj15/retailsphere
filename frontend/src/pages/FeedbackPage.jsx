@@ -27,7 +27,7 @@ const FeedbackPage = () => {
     try {
       await axios.post(`${BACKEND_URL}/feedback`, {
         message: feedbackText,
-        timestamp: new Date().toISOString(),
+        timstamp: new Date().toISOString(),
       });
       setFeedbackText('');
       fetchFeedback(); // refresh list

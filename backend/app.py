@@ -100,9 +100,9 @@ def dashboard_analytics_product(product_id):
         cursor.execute("""
             SELECT feedback_type, COUNT(*) AS count
             FROM feedback
-            WHERE product_id = %s
+            WHERE id = %s
             GROUP BY feedback_type
-        """, (product_id,))
+        """, (id,))
         feedback_rows = cursor.fetchall()
 
         feedback_counts = {'like': 0, 'neutral': 0, 'dislike': 0}
@@ -116,7 +116,7 @@ def dashboard_analytics_product(product_id):
         cursor.execute("""
             SELECT COUNT(*) AS total_reports
             FROM feedback
-            WHERE product_id = %s AND is_reported = TRUE
+            WHERE id = %s AND is_reported = TRUE
         """, (product_id,))
         report_row = cursor.fetchone()
         total_reports = report_row['total_reports'] if report_row else 0
