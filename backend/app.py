@@ -89,20 +89,19 @@ def render_product_page(id):
     except Exception as e:
         return f"Internal Server Error: {e}", 500
     
-
 @app.route('/dashboard/analytics/<int:product_id>')
 def dashboard_analytics_product(product_id):
     try:
         conn = get_db()
         cursor = conn.cursor(dictionary=True)
 
-        # Get feedback counts for the specific product
+        # Get feedback counts from product_feedback table
         cursor.execute("""
             SELECT feedback_type, COUNT(*) AS count
-            FROM feedback
-            WHERE id = %s
+            FROM product_feedback
+            WHERE product_id = %s
             GROUP BY feedback_type
-        """, (id,))
+        """, (product_id,))
         feedback_rows = cursor.fetchall()
 
         feedback_counts = {'like': 0, 'neutral': 0, 'dislike': 0}
@@ -112,11 +111,11 @@ def dashboard_analytics_product(product_id):
             if feedback_type in feedback_counts:
                 feedback_counts[feedback_type] = count
 
-        # Count number of reports for the product
+        # Count reports from product_reports table
         cursor.execute("""
             SELECT COUNT(*) AS total_reports
-            FROM feedback
-            WHERE id = %s AND is_reported = TRUE
+            FROM product_reports
+            WHERE product_id = %s
         """, (product_id,))
         report_row = cursor.fetchone()
         total_reports = report_row['total_reports'] if report_row else 0
