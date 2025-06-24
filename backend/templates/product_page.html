@@ -1,46 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ product.name }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-
-    .back-button {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 10px 20px;
-      background-color: #1d4ed8;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    .back-button:hover {
-      background-color: #2563eb;
+      font-family: 'Manrope', sans-serif;
     }
   </style>
 </head>
-<body>
-  <h2>{{ product.name }}</h2>
-  <p><b>Brand:</b> {{ product.brand }}</p>
-  <p><b>Price:</b> ₹{{ product.price }}</p>
-  <p><b>Description:</b> {{ product.description }}</p>
-  <p><b>Ethical Tags:</b> {{ product.ethical_tags }}</p>
-  <p><b>Carbon Footprint:</b> {{ product.carbon_footprint }}</p>
-  <p><b>Trust Score:</b> {{ product.trust_score }}</p>
+<body class="bg-[#111a22] text-white min-h-screen px-6 py-10">
 
-  {% if product.image_url %}
-    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width: 300px; margin-top: 15px;" />
-  {% endif %}
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-8 border-b border-[#233648] pb-4">
+    <h1 class="text-2xl font-bold">{{ product.name }}</h1>
+    <nav class="flex gap-6 text-sm">
+      <a href="/" class="hover:underline">🏠 Home</a>
+      <a href="/scan" class="hover:underline">🔍 Scan</a>
+    </nav>
+  </header>
 
-  <!-- ✅ Back to Website button -->
-  <br><br>
-  <a href="https://retailsphere-frontend.onrender.com" class="back-button">
-    🏠 Back to Website
-  </a>
+  <!-- Product Info -->
+  <div class="bg-[#1a2633] p-6 rounded-xl space-y-4 border border-[#233648] max-w-xl mx-auto">
+    {% if product.image_url %}
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" class="rounded-md w-full object-contain mb-4" />
+    {% endif %}
+
+    <p><span class="font-semibold text-gray-300">Brand:</span> {{ product.brand }}</p>
+    <p><span class="font-semibold text-gray-300">Price:</span> ₹{{ product.price }}</p>
+    <p><span class="font-semibold text-gray-300">Description:</span> {{ product.description }}</p>
+    <p><span class="font-semibold text-gray-300">Ethical Tags:</span> {{ product.ethical_tags }}</p>
+    <p><span class="font-semibold text-gray-300">Carbon Footprint:</span> {{ product.carbon_footprint }}</p>
+    <p><span class="font-semibold text-gray-300">Trust Score:</span> {{ product.trust_score }}</p>
+  </div>
+
+  <!-- Footer Navigation -->
+  <div class="mt-10 text-center">
+    <a href="/" class="text-indigo-500 hover:underline">← Back to Website</a>
+  </div>
+
 </body>
 </html>
