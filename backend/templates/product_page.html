@@ -14,15 +14,6 @@
 </head>
 <body class="bg-[#111a22] text-white min-h-screen px-6 py-10">
 
-  <!-- Header -->
-  <header class="flex items-center justify-between mb-8 border-b border-[#233648] pb-4">
-    <h1 class="text-2xl font-bold">{{ product.name }}</h1>
-    <nav class="flex gap-6 text-sm">
-      <a href="/" class="hover:underline">🏠 Home</a>
-      <a href="/scan" class="hover:underline">🔍 Scan</a>
-    </nav>
-  </header>
-
   <!-- Product Info -->
   <div class="bg-[#1a2633] p-6 rounded-xl space-y-4 border border-[#233648] max-w-xl mx-auto">
     {% if product.image_url %}
@@ -39,7 +30,9 @@
 
   <!-- Footer Navigation -->
   <div class="mt-10 text-center">
-    <a href="/" class="text-indigo-500 hover:underline">← Back to Website</a>
+   <a href="https://retailsphere-frontend.onrender.com" class="text-indigo-500 hover:underline">
+    🏠 Back to Website
+  </a>
   </div>
 
 </body>
