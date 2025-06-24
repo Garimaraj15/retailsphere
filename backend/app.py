@@ -188,14 +188,13 @@ def add_feedback():
     try:
         data = request.get_json()
         message = data.get('message')
-        timestamp = data.get('timestamp')
 
         if not message:
             return jsonify({'error': 'Message is required'}), 400
 
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Feedback (message, timestamp) VALUES (%s, %s)", (message, timestamp))
+        cursor.execute("INSERT INTO Feedback (message) VALUES (%s)", (message,))
         conn.commit()
         return jsonify({'status': 'success'}), 201
 
@@ -215,6 +214,7 @@ def get_feedback():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/product/<int:product_id>/report', methods=['POST'])
 def report_product(product_id):
