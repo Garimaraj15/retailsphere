@@ -58,7 +58,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-[#111a22] text-white font-['Manrope','Noto Sans',sans-serif]">
       {/* Header */}
-      <header className="flex items-center justify-between px-10 py-4 border-b border-[#233648]">
+      <header className="flex flex-col sm:flex-row items-center justify-between px-4 sm:px-10 py-4 gap-4 border-b border-[#233648]">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 text-white">
             <svg viewBox="0 0 48 48" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -75,15 +75,15 @@ const Dashboard = () => {
       </header>
 
       {/* Content */}
-      <main className="px-10 py-8 max-w-6xl mx-auto">
+      <main className="px-4 sm:px-10 py-6 sm:py-8 max-w-6xl mx-auto">
         <h2 className="text-2xl font-bold mb-6 text-center">📊 Feedback Overview</h2>
 
         {/* 🔽 Filter */}
-        <div className="mb-6 flex justify-center">
+        <div className="mb-6 flex justify-center px-2">
           <select
             value={selectedProductId}
             onChange={(e) => setSelectedProductId(e.target.value)}
-            className="bg-[#1a2633] text-white border border-[#233648] px-4 py-2 rounded-md"
+            className="w-full sm:w-auto bg-[#1a2633] text-white border border-[#233648] px-4 py-2 rounded-md"
           >
             <option value="all">All Products</option>
             {products.map((product) => (
@@ -95,7 +95,7 @@ const Dashboard = () => {
         </div>
 
         {/* Chart */}
-        <div className="bg-[#1a2633] p-6 rounded-xl shadow-lg border border-[#233648]">
+       <div className="bg-[#1a2633] p-4 sm:p-6 rounded-xl shadow-lg border border-[#233648]">
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={400}>
               <BarChart data={chartData}>

@@ -170,8 +170,8 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#111a22] text-white font-['Manrope','Noto Sans',sans-serif] overflow-x-hidden">
-      <header className="flex items-center justify-between px-10 py-4 border-b border-[#233648]">
+    <div className="min-h-screen bg-[#111a22] text-white font-['Manrope','Noto Sans',sans-serif] overflow-x-hidden px-4 sm:px-8">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-10 py-4 border-b border-[#233648]">
         <div className="text-lg font-bold tracking-tight">Retail Assistant</div>
         <nav className="flex gap-8 text-sm font-medium">
           <Link to="/scan" className="hover:text-[#137feb]">Scan</Link>
@@ -183,7 +183,7 @@ const HomePage = () => {
 
       <main className="px-6 py-8 max-w-5xl mx-auto">
         <section className="bg-cover bg-center rounded-xl p-8 text-center mb-12" style={{ backgroundImage: "linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.5)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDzpi-r7_4olMfofQdWtKspZEjQYfcQd-wZ2xOkWEn6m5AToLbQTrq4zyQG8vzFGNAFE8LWTT_QF-SAiXuJGvC4EFDqohhU1qCJaLK9G_R7dIxdiV0ipU738MqDdE5CRUkdTdOhZO95PNhhE_DH32VU1kXw8olDl77WxB7UWoi4Ujxh4a-EyABTblTvRwxlB4zW-hb_S_NIokwBllIvaxIdvzN1mFWQS3TKPKVWhaF-XBqNB64EzdIVeBv0dueU2uOruVQFOS-Tnyw')" }}>
-          <h1 className="text-4xl font-black mb-2">Welcome to Our Store</h1>
+          <h1 className="text-3xl sm:text-4xl font-black mb-2">Welcome to Our Store</h1>
           <p className="text-base font-normal mb-6">Join the queue, check your status, and explore our products.</p>
         </section>
 
@@ -276,7 +276,7 @@ const HomePage = () => {
       <p className="text-white"><b>Price:</b> ₹{product.price}</p>
       <p className="text-white"><b>Description:</b> {product.description}</p>
       {product.image_url && (
-        <img src={product.image_url} alt={product.name} className="mt-4 rounded-xl max-w-xs" />
+        <img src={product.image_url} alt={product.name} className="mt-4 rounded-xl max-w-xs w-full" />
       )}
 
       {/* Feedback */}

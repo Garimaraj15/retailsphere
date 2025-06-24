@@ -70,8 +70,7 @@ const WhisprCart = () => {
 
   return (
     <div className="min-h-screen bg-[#111a22] text-white flex items-center justify-center py-10 px-4">
-      <div className="w-full max-w-md bg-[#1a2633] rounded-3xl shadow-xl p-6 relative">
-
+      <div className="w-full max-w-md sm:max-w-md bg-[#1a2633] rounded-3xl shadow-xl p-6 relative">
         {/* Top Home Link */}
         <div className="absolute top-4 left-4">
           <Link to="/" className="hover:underline">Home</Link>
@@ -86,7 +85,7 @@ const WhisprCart = () => {
           <Lottie
             animationData={robotListeningAnimation}
             loop
-            className="w-72 h-72" // Larger size
+            className="w-48 h-48 sm:w-72 sm:h-72" // Larger size
           />
         </motion.div>
 
@@ -105,7 +104,7 @@ const WhisprCart = () => {
         </div>
 
         {/* Chat Display */}
-        <div className="h-80 overflow-y-auto mb-4 px-2">
+        <div className="max-h-64 sm:max-h-80 overflow-y-auto mb-4 px-2">
           {messages.map((msg, index) => (
             <div key={index} className={`flex mb-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
@@ -122,7 +121,7 @@ const WhisprCart = () => {
         </div>
 
         {/* Input Area */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <input
             type="text"
             placeholder="Type your message..."

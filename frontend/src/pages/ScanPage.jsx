@@ -71,7 +71,7 @@ const ScanPage = () => {
   return (
     <div className="min-h-screen bg-[#111a22] text-white" style={{ fontFamily: "'Manrope', 'Noto Sans', sans-serif" }}>
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-[#233648] px-10 py-3">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-10 py-3 border-b border-[#233648]">
         <div className="flex items-center gap-4">
           <div className="w-4 h-4 text-white">
             <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,8 +87,8 @@ const ScanPage = () => {
       </header>
 
       {/* Body */}
-      <main className="flex justify-center px-6 py-10">
-        <div className="w-full max-w-2xl bg-[#1c2b36] p-6 rounded-xl shadow-lg">
+      <main className="flex justify-center px-4 sm:px-6 py-8 sm:py-10">
+          <div className="w-full max-w-lg bg-[#1c2b36] p-4 sm:p-6 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold text-center mb-2">📷 Scan QR Code</h2>
           <p className="text-center text-[#92adc9] text-sm mb-6">
             Position the QR code inside the box to auto-redirect to product details.
@@ -96,7 +96,7 @@ const ScanPage = () => {
 
           <div
             id={qrCodeRegionId}
-            className="w-full aspect-square relative rounded-xl overflow-hidden"
+            className="w-full min-h-[300px] aspect-square relative rounded-xl overflow-hidden"
           >
             <div className="absolute inset-0 border-4 border-dashed rounded-xl border-blue-500 animate-pulse z-10 pointer-events-none" />
             <div className="absolute inset-0 border-[6px] border-transparent rounded-xl z-20 pointer-events-none animate-scanner-glow" />
@@ -110,7 +110,7 @@ const ScanPage = () => {
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => window.history.back()}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="px-4 py-2 w-full sm:w-auto bg-blue-600 text-white rounded hover:bg-blue-700"
               >
                 🔙 Go Back
               </button>

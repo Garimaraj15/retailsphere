@@ -37,9 +37,9 @@ const FeedbackPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#111a22] text-white font-['Manrope'] px-8 py-10">
+    <div className="min-h-screen bg-[#111a22] text-white font-['Manrope'] px-4 sm:px-8 py-6 sm:py-10">
       {/* Header */}
-      <header className="flex items-center justify-between mb-8 border-b border-[#233648] pb-4">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 border-b border-[#233648] pb-4">
         <h1 className="text-xl font-bold">📝 Store Feedback</h1>
         <nav className="flex gap-6 text-sm">
           <Link to="/" className="hover:underline">Home</Link>
