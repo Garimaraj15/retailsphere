@@ -188,14 +188,14 @@ def add_feedback():
     try:
         data = request.get_json()
         message = data.get('message')
-        timstamp = data.get('timstamp')
+        timestamp = data.get('timestamp')
 
         if not message:
             return jsonify({'error': 'Message is required'}), 400
 
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Feedback (message, timstamp) VALUES (%s, %s)", (message, timstamp))
+        cursor.execute("INSERT INTO Feedback (message, timestamp) VALUES (%s, %s)", (message, timestamp))
         conn.commit()
         return jsonify({'status': 'success'}), 201
 
@@ -208,9 +208,9 @@ def get_feedback():
     try:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute("SELECT message, timstamp FROM Feedback ORDER BY id DESC")
+        cursor.execute("SELECT message, timestamp FROM Feedback ORDER BY id DESC")
         results = cursor.fetchall()
-        feedback_list = [{'message': row[0], 'timstamp': row[1]} for row in results]
+        feedback_list = [{'message': row[0], 'timestamp': row[1]} for row in results]
         return jsonify(feedback_list)
 
     except Exception as e:
