@@ -12,7 +12,7 @@ const HomePage = () => {
   const [feedbackStats, setFeedbackStats] = useState({ like: 0, neutral: 0, dislike: 0 });
   const [reportReason, setReportReason] = useState('');
   const [userName, setUserName] = useState('');
-  const [selectedStore, setSelectedStore] = useState('Reliance Fresh');
+  const [selectedStore, setSelectedStore] = useState('Walmart-U.S');
   const [token, setToken] = useState(null);
   const [queueSize, setQueueSize] = useState(null);
   const [tokenPosition, setTokenPosition] = useState(null);
