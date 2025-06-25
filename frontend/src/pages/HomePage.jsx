@@ -239,8 +239,8 @@ const HomePage = () => {
   </div>
 
   <p className="text-white font-medium">
-  {t('liveQueueSize')} <b>{selectedStore}</b>:
-  <span className="font-bold">
+  {t('liveQueueSize')} <b>{selectedStore}</b> :
+   <span className="font-bold">
     {selectedStore === 'Walmart-U.S' && (usQueue ?? '-')}
     {selectedStore === 'Walmart-Canada' && (canadaQueue ?? '-')}
     {selectedStore === 'Walmart-China' && (chinaQueue ?? '-')}
