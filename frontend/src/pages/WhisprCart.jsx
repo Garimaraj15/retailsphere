@@ -27,9 +27,10 @@ const WhisprCart = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('https://retailsphere-4.onrender.com/chatbot/ask', {
-        message: input
-      });
+      const res = await axios.post('https://retailsphere-4.onrender.com/chatbot/ask', 
+        { message: input },
+  { headers: { 'Content-Type': 'application/json' } }
+);
 
       const botMessage = {
         text: res.data.response || "Sorry, I didn’t understand that.",
