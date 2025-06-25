@@ -12,9 +12,11 @@ const HomePage = () => {
   const [feedbackStats, setFeedbackStats] = useState({ like: 0, neutral: 0, dislike: 0 });
   const [reportReason, setReportReason] = useState('');
   const [userName, setUserName] = useState('');
-  const [selectedStore, setSelectedStore] = useState(null);
+  const [selectedStore, setSelectedStore] = useState('Walmart-U.S');
   const [token, setToken] = useState(null);
-  const [queueSize, setQueueSize] = useState(null);
+  const [usQueue, setUsQueue] = useState(null);
+  const [canadaQueue, setCanadaQueue] = useState(null);
+  const [chinaQueue, setChinaQueue] = useState(null);
   const [tokenPosition, setTokenPosition] = useState(null);
   const [joinTime, setJoinTime] = useState(null);
   const [waitTime, setWaitTime] = useState(null);
@@ -156,18 +158,27 @@ const HomePage = () => {
   };
 
   const getQueueStatus = async () => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/queue/status/${selectedStore}`);
-      const data = await res.json();
-      if (res.ok) {
-        setQueueSize(data.queue_size);
-      } else {
-        setQueueSize("Error");
-      }
-    } catch {
-      setQueueSize("Server Down");
-    }
-  };
+  try {
+    const [us, canada, china] = await Promise.all([
+      fetch(`${BACKEND_URL}/queue/status/Walmart-U.S`),
+      fetch(`${BACKEND_URL}/queue/status/Walmart-Canada`),
+      fetch(`${BACKEND_URL}/queue/status/Walmart-China`)
+    ]);
+
+    const usData = await us.json();
+    const canadaData = await canada.json();
+    const chinaData = await china.json();
+
+    setUsQueue(usData.queue_size);
+    setCanadaQueue(canadaData.queue_size);
+    setChinaQueue(chinaData.queue_size);
+  } catch {
+    setUsQueue("Error");
+    setCanadaQueue("Error");
+    setChinaQueue("Error");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-[#111a22] text-white font-['Manrope','Noto Sans',sans-serif] overflow-x-hidden px-4 sm:px-8">
@@ -215,10 +226,10 @@ const HomePage = () => {
       onChange={e => setSelectedStore(e.target.value)}
       className="bg-[#233648] text-white px-4 py-2 rounded-xl w-full sm:w-auto"
     >
-      <option>Walmart-U.S</option>
-      <option>Walmart-Canada</option>
-      <option>Walmart-China</option>
-    </select>
+      <option value="Walmart-U.S">Walmart-U.S</option>
+      <option value="Walmart-Canada">Walmart-Canada</option>
+        <option value="Walmart-China">Walmart-China</option>
+      </select>
     <button
       onClick={joinQueue}
       className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-xl"
@@ -228,8 +239,14 @@ const HomePage = () => {
   </div>
 
   <p className="text-white font-medium">
-    {t('liveQueueSize')} <b>{selectedStore}</b>: <span className="font-bold">{queueSize ?? '-'}</span>
-  </p>
+  {t('liveQueueSize')} <b>{selectedStore}</b>:
+  <span className="font-bold">
+    {selectedStore === 'Walmart-U.S' && (usQueue ?? '-')}
+    {selectedStore === 'Walmart-Canada' && (canadaQueue ?? '-')}
+    {selectedStore === 'Walmart-China' && (chinaQueue ?? '-')}
+  </span>
+</p>
+
 
   {token && (
     <div className="mt-4 bg-[#233648] p-4 rounded-xl space-y-2">
@@ -251,6 +268,20 @@ const HomePage = () => {
 
 {/* Product Section */}
 <section className="mb-12 p-6 bg-[#1e293b] rounded-xl shadow-md">
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+  <div className="bg-[#1e293b] rounded-xl p-4">
+    <h3 className="text-white font-semibold mb-1">Walmart-U.S</h3>
+    <p className="text-xl font-bold">{usQueue ?? '-'}</p>
+  </div>
+  <div className="bg-[#1e293b] rounded-xl p-4">
+    <h3 className="text-white font-semibold mb-1">Walmart-Canada</h3>
+    <p className="text-xl font-bold">{canadaQueue ?? '-'}</p>
+  </div>
+  <div className="bg-[#1e293b] rounded-xl p-4">
+    <h3 className="text-white font-semibold mb-1">Walmart-China</h3>
+    <p className="text-xl font-bold">{chinaQueue ?? '-'}</p>
+  </div>
+</div>
   <h2 className="text-2xl font-bold text-white mb-4">{t('EnterProductID')}</h2>
   <div className="flex flex-wrap gap-4 mb-4">
     <input
