@@ -14,12 +14,10 @@ const HomePage = () => {
   const [userName, setUserName] = useState('');
   const [selectedStore, setSelectedStore] = useState('Walmart-U.S');
   const [token, setToken] = useState(null);
+  const [queueSize, setQueueSize] = useState(null);
   const [tokenPosition, setTokenPosition] = useState(null);
   const [joinTime, setJoinTime] = useState(null);
   const [waitTime, setWaitTime] = useState(null);
-  const [usQueue, setUsQueue] = useState(null);
-  const [canadaQueue, setCanadaQueue] = useState(null);
-  const [chinaQueue, setChinaQueue] = useState(null);
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -28,32 +26,10 @@ const HomePage = () => {
       .then(data => setMessage(data.message))
       .catch(() => setMessage("Could not connect to Flask backend"));
 
-    fetchAllQueues();
-    const interval = setInterval(fetchAllQueues, 15000);
+    getQueueStatus();
+    const interval = setInterval(getQueueStatus, 15000);
     return () => clearInterval(interval);
   }, []);
-
-  const fetchAllQueues = async () => {
-    try {
-      const [us, canada, china] = await Promise.all([
-        fetch(`${BACKEND_URL}/queue/status/Walmart-U.S`),
-        fetch(`${BACKEND_URL}/queue/status/Walmart-Canada`),
-        fetch(`${BACKEND_URL}/queue/status/Walmart-China`)
-      ]);
-
-      const usData = await us.json();
-      const canadaData = await canada.json();
-      const chinaData = await china.json();
-
-      setUsQueue(usData.queue_size);
-      setCanadaQueue(canadaData.queue_size);
-      setChinaQueue(chinaData.queue_size);
-    } catch (err) {
-      setUsQueue("Error");
-      setCanadaQueue("Error");
-      setChinaQueue("Error");
-    }
-  };
 
   const handleFetch = () => {
     if (!productId.trim()) return;
@@ -131,7 +107,6 @@ const HomePage = () => {
       if (res.ok) {
         setToken(data.token_number);
         setJoinTime(data.join_time);
-        fetchAllQueues();
       } else {
         alert(data.error || "Join failed");
       }
@@ -172,7 +147,6 @@ const HomePage = () => {
         setToken(null);
         setTokenPosition(null);
         setWaitTime(null);
-        fetchAllQueues();
       } else {
         alert(data.error || "Failed to leave queue");
       }
@@ -181,7 +155,21 @@ const HomePage = () => {
     }
   };
 
- return (
+  const getQueueStatus = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/queue/status/${selectedStore}`);
+      const data = await res.json();
+      if (res.ok) {
+        setQueueSize(data.queue_size);
+      } else {
+        setQueueSize("Error");
+      }
+    } catch {
+      setQueueSize("Server Down");
+    }
+  };
+
+  return (
     <div className="min-h-screen bg-[#111a22] text-white font-['Manrope','Noto Sans',sans-serif] overflow-x-hidden px-4 sm:px-8">
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-10 py-4 border-b border-[#233648]">
         <div className="text-lg font-bold tracking-tight">Retail Assistant</div>
