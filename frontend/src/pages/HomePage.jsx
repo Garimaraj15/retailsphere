@@ -268,20 +268,7 @@ const HomePage = () => {
 
 {/* Product Section */}
 <section className="mb-12 p-6 bg-[#1e293b] rounded-xl shadow-md">
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-  <div className="bg-[#1e293b] rounded-xl p-4">
-    <h3 className="text-white font-semibold mb-1">Walmart-U.S</h3>
-    <p className="text-xl font-bold">{usQueue ?? '-'}</p>
-  </div>
-  <div className="bg-[#1e293b] rounded-xl p-4">
-    <h3 className="text-white font-semibold mb-1">Walmart-Canada</h3>
-    <p className="text-xl font-bold">{canadaQueue ?? '-'}</p>
-  </div>
-  <div className="bg-[#1e293b] rounded-xl p-4">
-    <h3 className="text-white font-semibold mb-1">Walmart-China</h3>
-    <p className="text-xl font-bold">{chinaQueue ?? '-'}</p>
-  </div>
-</div>
+  
   <h2 className="text-2xl font-bold text-white mb-4">{t('EnterProductID')}</h2>
   <div className="flex flex-wrap gap-4 mb-4">
     <input
